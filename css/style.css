@@ -18,7 +18,8 @@ body {
 
 
 img {
-   width: 400px;
+   width: 100%;
+   max-width: 400px;
    object-fit: cover;
    float: right;
    margin: 0 0 0 20px;
