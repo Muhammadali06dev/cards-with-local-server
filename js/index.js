@@ -2,24 +2,30 @@ const overlay = document.querySelector(".overlay")
 const articleList = document.querySelector(".article-list")
 const articleContainer = document.querySelector(".article-container")
 
-const api = 'http://localhost:3000/articles'
-const request = new XMLHttpRequest()
 
-request.addEventListener("readystatechange", (e) => {
-   if (request.readyState == 4 && request.status == 200) {
-      const data = JSON.parse(request.responseText)
-      updateUI(data)
-      overlay.classList.add("hide")
-   } else if (request.readyState == 4) {
-      console.log("Error")
-      overlay.classList.add("hide")
-   } else {
-      overlay.classList.remove("hide")
+const getData = async () => {
+   overlay.classList.remove('hide')
+   const req = await fetch('data/db.json')
+
+   if (req.status >= 500) {
+      throw Error("Server bilan bog'liq xatolik :(")
+   } else if (req.status >= 400) {
+      overlay.classList.add('hide')
+      throw Error("Page not found :(")
    }
+
+   const data = await req.json()
+   overlay.classList.add("hide")
+   return data
+
+}
+
+getData().then(data => {
+   updateUI(data.articles)
+}).catch(err => {
+   console.log(err.message)
 })
 
-request.open("get", api)
-request.send()
 
 function updateUI(data) {
    const ul = document.createElement("ul")

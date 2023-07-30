@@ -1,32 +1,40 @@
 const overlay = document.querySelector(".overlay")
 const idEl = document.querySelector("#id")
 const articleContainer = document.querySelector(".article-container")
+const header = document.querySelector("h1")
 
 
 const query = window.location.search
 const id = query.slice(1)
 
 idEl.textContent = id
-const api = `http://localhost:3000/articles/${id}`
-const request = new XMLHttpRequest()
+const api = `data/db.json`
 
-request.addEventListener("readystatechange", (e) => {
-   if (request.readyState == 4 && request.status == 200) {
-      const data = JSON.parse(request.responseText)
-      updateUI(data)
+
+const getData = async (resource) => {
+   overlay.classList.remove("hide")
+   const request = await fetch(resource)
+
+   if (request.status >= 500) {
       overlay.classList.add("hide")
-   } else if (request.readyState == 4) {
-      console.log("Error")
+      throw new Error("Serverda xatolik bor!!!")
+   } else if (request.status >= 400) {
       overlay.classList.add("hide")
-   } else {
-      overlay.classList.remove("hide")
+      throw new Error("Page not found :(")
    }
-})
 
-request.open("get", api)
-request.send()
+   const data = await request.json()
+   overlay.classList.add("hide")
+   return data
+}
 
-function updateUI(data) {
+getData(api)
+   .then(data => updateUI(data))
+   .catch(err => header.innerHTML = (err.message))
+
+
+function updateUI(obj) {
+   const data = obj.articles[id - 1]
    articleContainer.innerHTML = `
    <div class="card">
    <img src="${data.image}" alt="" width="100">
@@ -35,6 +43,7 @@ function updateUI(data) {
                ${data.body}
             </p>
             <h5 class="card__author">Author: ${data.author}</h5>
+            <a href="../index.html">Home</a>
          </div>
    `
 }

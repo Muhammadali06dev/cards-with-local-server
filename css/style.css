@@ -29,6 +29,16 @@ p {
    text-align: justify;
 }
 
+a {
+   text-decoration: none;
+   padding: 5px 15px;
+   border: 1px solid rgb(59, 58, 58);
+   background: #353232;
+   color: white;
+   border-radius: 4px;
+   box-shadow: 1px 1px 3px #504f4f
+}
+
 .container {
    padding-top: 50px;
    max-width: 950px;
